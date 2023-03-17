@@ -5,9 +5,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
+    
     public float forceUpValue = 10f;
     public float gravityModifier = 1f;
     public bool isOnGround = true;
+    public bool gameOver = false;
 
     void Start()
     {
@@ -20,7 +22,6 @@ public class PlayerController : MonoBehaviour
         Physics.gravity *= gravityModifier;
         
     }
-
 
     void Update()
     {
@@ -35,6 +36,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        isOnGround = true;
+        // Using tags to differentiate the collisions
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isOnGround = true;
+        } else if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            gameOver = true;
+            Debug.Log("Game Over!");
+        }
+        
     }
 }

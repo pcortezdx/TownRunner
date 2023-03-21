@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody playerRb;
     private Animator playerAnimator;
 
+    public ParticleSystem explotionParticle;
+    public ParticleSystem dirtParticle;
     public float forceUpValue = 10f;
     public float gravityModifier = 1f;
     public bool isOnGround = true;
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
             //The animator parameters Jump_trig controls is used to
             // trigger the jump animation.
             playerAnimator.SetTrigger("Jump_trig");
+            dirtParticle.Stop();
         }
     }
 
@@ -48,14 +51,20 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            dirtParticle.Play();
+
         } else if (collision.gameObject.CompareTag("Obstacle"))
         {
             gameOver = true;
             Debug.Log("Game Over!");
 
+            dirtParticle.Stop();
+            explotionParticle.Play();
+
             //Changing parameters for Death animation
             playerAnimator.SetBool("Death_b", true);
             playerAnimator.SetInteger("DeathType_int", 1);
+            
         }
         
     }

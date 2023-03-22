@@ -9,6 +9,11 @@ public class PlayerController : MonoBehaviour
 
     public ParticleSystem explotionParticle;
     public ParticleSystem dirtParticle;
+
+    public AudioClip jumpSound;
+    public AudioClip crashSound;
+    private AudioSource playerAudio;
+
     public float forceUpValue = 10f;
     public float gravityModifier = 1f;
     public bool isOnGround = true;
@@ -27,6 +32,10 @@ public class PlayerController : MonoBehaviour
         // Getting the animation component attached to the player
         playerAnimator = GetComponent<Animator>();
 
+        //Getting the Audio Source component that is attached to the player
+        // It will be used to control the Audio clip effects.
+        playerAudio = GetComponent<AudioSource>();
+
     }
 
     void Update()
@@ -42,13 +51,17 @@ public class PlayerController : MonoBehaviour
             // trigger the jump animation.
             playerAnimator.SetTrigger("Jump_trig");
             dirtParticle.Stop();
+
+            //Using PlayOneShot function, we play the audio clip 1 time
+            // and set the sound scale to max volume 1
+            playerAudio.PlayOneShot(jumpSound, 1.0f);
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         // Using tags to differentiate the collisions
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && !gameOver)
         {
             isOnGround = true;
             dirtParticle.Play();
@@ -58,12 +71,26 @@ public class PlayerController : MonoBehaviour
             gameOver = true;
             Debug.Log("Game Over!");
 
+            //Executing the appropiate particle effects
             dirtParticle.Stop();
             explotionParticle.Play();
+
+            //Using PlayOneShot function, we play the audio clip 1 time
+            // and set the sound scale to max volume 1
+            playerAudio.PlayOneShot(crashSound, 1.0f);
 
             //Changing parameters for Death animation
             playerAnimator.SetBool("Death_b", true);
             playerAnimator.SetInteger("DeathType_int", 1);
+
+            //Avoid that the player is dead on air when it hits the
+            //top of the obstacle.
+            if (transform.position.y > 1.0)
+            {
+                transform.Translate(
+                    new Vector3(transform.position.x, 0, transform.position.z), 
+                    Space.World);
+            }            
             
         }
         

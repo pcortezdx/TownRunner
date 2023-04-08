@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip jumpSound;
     public AudioClip crashSound;
     private AudioSource playerAudio;
+    private AudioSource backgroundAudio;
 
     public float forceUpValue = 10f;
     public float gravityModifier = 1f;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
         // It will be used to control the Audio clip effects.
         playerAudio = GetComponent<AudioSource>();
 
+        backgroundAudio = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
 
     void Update()
@@ -77,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
             //Using PlayOneShot function, we play the audio clip 1 time
             // and set the sound scale to max volume 1
-            playerAudio.PlayOneShot(crashSound, 1.0f);
+            playerAudio.PlayOneShot(crashSound, 1.0f);            
 
             //Changing parameters for Death animation
             playerAnimator.SetBool("Death_b", true);
@@ -90,8 +92,9 @@ public class PlayerController : MonoBehaviour
                 transform.Translate(
                     new Vector3(transform.position.x, 0, transform.position.z), 
                     Space.World);
-            }            
-            
+            }
+
+            backgroundAudio.Stop();
         }
         
     }

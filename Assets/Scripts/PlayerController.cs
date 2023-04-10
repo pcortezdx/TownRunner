@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
-{
-    private Rigidbody playerRb;
-    private Animator playerAnimator;
-
+{    
     public ParticleSystem explotionParticle;
     public ParticleSystem dirtParticle;
 
@@ -19,6 +16,10 @@ public class PlayerController : MonoBehaviour
     public float gravityModifier = 1f;
     public bool isOnGround = true;
     public bool gameOver = false;
+    
+    private int jumpCounter = 0;
+    private Rigidbody playerRb;
+    private Animator playerAnimator;
 
     void Start()
     {
@@ -44,20 +45,31 @@ public class PlayerController : MonoBehaviour
     {
         // Add an instant force (impulse) to move the player
         // when the user hits the spacebar.
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
+        
+        if (Input.GetKeyDown(KeyCode.Space) && !gameOver 
+                && (jumpCounter < 2 || isOnGround))
         {
-            playerRb.AddForce(Vector3.up * forceUpValue, ForceMode.Impulse);
+            //Reducing force up on the second jump
+            float forceUp = (jumpCounter == 1) ? forceUpValue * 0.75f : forceUpValue; 
+
+            playerRb.AddForce(Vector3.up * forceUp, ForceMode.Impulse);
             isOnGround = false;
 
             //The animator parameters Jump_trig controls is used to
             // trigger the jump animation.
+
             playerAnimator.SetTrigger("Jump_trig");
             dirtParticle.Stop();
 
             //Using PlayOneShot function, we play the audio clip 1 time
             // and set the sound scale to max volume 1
+
             playerAudio.PlayOneShot(jumpSound, 1.0f);
+            jumpCounter += 1;
+
+            Debug.Log(string.Format("jump counter = {0}", jumpCounter));
         }
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -67,6 +79,9 @@ public class PlayerController : MonoBehaviour
         {
             isOnGround = true;
             dirtParticle.Play();
+            jumpCounter = 0;
+
+            Debug.Log(string.Format("jump counter = {0}", jumpCounter));
 
         } else if (collision.gameObject.CompareTag("Obstacle"))
         {

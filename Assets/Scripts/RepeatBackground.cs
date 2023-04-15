@@ -15,9 +15,8 @@ public class RepeatBackground : MonoBehaviour
         //to calculate the mid point of the background
         repeatWidth = GetComponent<BoxCollider>().size.x / 2;
 
-    }
+    }   
 
-    
     void Update()
     {
         //Reset background position to simulate infinite movement

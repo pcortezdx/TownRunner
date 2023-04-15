@@ -61,6 +61,10 @@ sysinfo.txt
 *.unitypackage
 *.app
 
+# WebGL
+connectwebgl.zip
+WebGL%20Builds/*
+
 # ===============================================
 # Unity Large packages - custom for this project
 # ===============================================
@@ -121,4 +125,5 @@ Temporary Items
 
 # VS Code
 *.vscode
+
 
